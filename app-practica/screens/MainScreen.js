@@ -30,17 +30,17 @@ export default function MainScreen({ navigation }) {
       {/* Botones en la parte inferior */}
       <View style={styles.buttonContainer}>
         {/* Botón de cámara alineado a la izquierda */}
-        <TouchableOpacity style={styles.cameraButton} onPress={() => Alert.alert('Cámara', 'Cámara, sonrie')}>
+        <TouchableOpacity style={styles.cameraButton} onPress={() => Alert.alert('Cámara', 'Cámara')}>
           <Icon name="camera" size={27} color="white" />
         </TouchableOpacity>
 
         {/* Botón de localización centrado */}
-        <TouchableOpacity style={styles.locationButton} onPress={() => Alert.alert('Ubicación', 'Estamos trabajando para ello')}>
+        <TouchableOpacity style={styles.locationButton} onPress={() => Alert.alert('Ubicación', 'Mapa')}>
           <Icon name="map-marker" size={27} color="white" />
         </TouchableOpacity>
 
         {/* Botón de retiro de basura alineado a la derecha */}
-        <TouchableOpacity style={styles.trashButton} onPress={() => Alert.alert('Retiro de Basura', 'Futuro retiro de basura')}>
+        <TouchableOpacity style={styles.trashButton} onPress={() => Alert.alert('Retiro de Basura', 'Retiro de basura')}>
           <Icon name="trash" size={27} color="white" />
         </TouchableOpacity>
       </View>
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-});
+}); 
