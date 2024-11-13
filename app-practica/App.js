@@ -1,51 +1,38 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import HomeScreen from './screens/HomeScreen'; 
+import { ThemeProvider } from './contexts/ThemeContext';
+import { Provider as PaperProvider } from 'react-native-paper';
+
+// Importa tus pantallas
+import HomeSplash from './screens/HomeSplash';
 import MainScreen from './screens/MainScreen';
 import ProfileScreen from './screens/ProfileScreen';
-import ConfiguracionScreen from './screens/SettingsScreen';
-import NotificationsScreen from './screens/NotificationsScreen'; // Pantalla de Notificaciones
+import CameraScreen from './screens/CameraScreen';
+import LocationScreen from './screens/LocationScreen';
+import TrashScreen from './screens/TrashScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 const Stack = createStackNavigator();
-const Drawer = createDrawerNavigator();
-
-// Configuración del Drawer (menú hamburguesa)
-function DrawerNavigator() {
-  return (
-    <Drawer.Navigator initialRouteName="Main">
-      <Drawer.Screen 
-        name="Main" 
-        component={MainScreen} 
-        options={{ title: 'Inicio', headerShown: false }} // Oculta el encabezado en MainScreen
-      />
-      <Drawer.Screen name="Profile" component={ProfileScreen} options={{ title: 'Perfil' }} />
-      <Drawer.Screen name="Configuracion" component={ConfiguracionScreen} options={{ title: 'Configuración' }} />
-    </Drawer.Navigator>
-  );
-}
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen} 
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen 
-          name="DrawerMenu" 
-          component={DrawerNavigator} 
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen 
-          name="Notifications" 
-          component={NotificationsScreen} 
-          options={{ title: 'Notificaciones' }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ThemeProvider>
+      <PaperProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="HomeSplash" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="HomeSplash" component={HomeSplash} />
+            <Stack.Screen name="MainScreen" component={MainScreen} />
+            <Stack.Screen name="Camera" component={CameraScreen} />
+            <Stack.Screen name="Location" component={LocationScreen} />
+            <Stack.Screen name="Trash" component={TrashScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </ThemeProvider>
   );
 }

@@ -1,11 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import MainLayout from '../components/MainLayout';
 
-export default function SettingsScreen() {
+export default function SettingsScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Configuraciones</Text>
-    </View>
+    <MainLayout navigation={navigation} currentRoute="Settings">
+      <View style={styles.container}>
+        <Text style={styles.text}>Configuraciones</Text>
+        {/* Aquí puedes agregar más opciones de configuración */}
+      </View>
+    </MainLayout>
   );
 }
 
@@ -20,3 +24,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+

@@ -1,10 +1,9 @@
-// HomeScreen.js
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, Image, Animated } from 'react-native';
+import { StyleSheet, Text, View, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import LOG_AMBIENTE from '../assets/LOG_AMBIENTE.png';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeSplash({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -15,9 +14,9 @@ export default function HomeScreen({ navigation }) {
       useNativeDriver: true,
     }).start();
 
-    // Navegar a la pantalla principal después de 5 segundos
+    // Navegar a MainScreen después de 5 segundos
     const timer = setTimeout(() => {
-      navigation.replace('DrawerMenu'); // Cambiado de 'Main' a 'DrawerMenu'
+      navigation.replace('MainScreen'); // Cambiado a 'MainScreen'
     }, 5000);
 
     return () => clearTimeout(timer); // Limpia el temporizador si la pantalla cambia
@@ -30,7 +29,7 @@ export default function HomeScreen({ navigation }) {
     >
       <Animated.Image source={LOG_AMBIENTE} style={[styles.image, { opacity: fadeAnim }]} />
       <Text style={styles.text}>Municipalidad de Quinchao</Text>
-      <Text style={styles.smallText}>Departamento de medioambiente</Text>
+      <Text style={styles.smallText}>Departamento de Medioambiente</Text>
 
       {/* Barra de carga */}
       <View style={styles.progressBarContainer}>
@@ -73,5 +72,6 @@ const styles = StyleSheet.create({
   progressBar: {
     height: '100%',
     backgroundColor: '#28A745',
+    width: '100%',
   },
 });

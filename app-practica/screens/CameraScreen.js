@@ -1,14 +1,12 @@
-// screens/NotificationsScreen.js
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import MainLayout from '../components/MainLayout';
 
-export default function NotificationsScreen({ navigation }) {
+export default function CameraScreen({ navigation }) {
   return (
-    <MainLayout navigation={navigation} currentRoute="Notifications">
+    <MainLayout navigation={navigation} currentRoute="Camera">
       <View style={styles.container}>
-        <Text style={styles.text}>Aquí están tus notificaciones</Text>
-        {/* Agrega una lista de notificaciones aquí */}
+        <Text style={styles.text}>Pantalla de Cámara</Text>
       </View>
     </MainLayout>
   );
