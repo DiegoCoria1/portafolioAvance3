@@ -7,7 +7,6 @@ export default function SettingsScreen({ navigation }) {
     <MainLayout navigation={navigation} currentRoute="Settings">
       <View style={styles.container}>
         <Text style={styles.text}>Configuraciones</Text>
-        {/* Aquí puedes agregar más opciones de configuración */}
       </View>
     </MainLayout>
   );

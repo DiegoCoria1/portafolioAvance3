@@ -1,4 +1,3 @@
-// screens/MainScreen.js
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, Paragraph, Avatar } from 'react-native-paper';
@@ -49,7 +48,7 @@ export default function MainScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20, // Ajusta según el header
+    paddingTop: 20, 
     alignItems: 'center',
     justifyContent: 'flex-start',
     backgroundColor: '#F5F5DC',

@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   bottomContainer: {
-    height: 100, // Altura específica para la parte inferior
+    height: 100, 
     backgroundColor: '#fff',
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,

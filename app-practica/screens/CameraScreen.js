@@ -6,7 +6,7 @@ export default function CameraScreen({ navigation }) {
   return (
     <MainLayout navigation={navigation} currentRoute="Camera">
       <View style={styles.container}>
-        <Text style={styles.text}>Pantalla de Cámara</Text>
+        <Text style={styles.text}>Pantalla de Cámara</Text> {/* Screen de futura camara */}
       </View>
     </MainLayout>
   );

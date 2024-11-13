@@ -16,7 +16,7 @@ export default function HomeSplash({ navigation }) {
 
     // Navegar a MainScreen después de 5 segundos
     const timer = setTimeout(() => {
-      navigation.replace('MainScreen'); // Cambiado a 'MainScreen'
+      navigation.replace('MainScreen');
     }, 5000);
 
     return () => clearTimeout(timer); // Limpia el temporizador si la pantalla cambia

@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Provider as PaperProvider } from 'react-native-paper';
 
-// Importa tus pantallas
+//Importamos 
 import HomeSplash from './screens/HomeSplash';
 import MainScreen from './screens/MainScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -15,7 +15,7 @@ import NotificationsScreen from './screens/NotificationsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 const Stack = createStackNavigator();
-
+//Diferentes screens
 export default function App() {
   return (
     <ThemeProvider>
