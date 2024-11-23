@@ -1,27 +1,51 @@
 {
   "expo": {
-    "name": "app-practica",
-    "slug": "app-practica",
+    "name": "respaldo",
+    "slug": "respaldo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Esta aplicación necesita acceder a la cámara para tomar fotos.",
+        "NSMicrophoneUsageDescription": "Esta aplicación necesita acceder al micrófono para grabar audio.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "La aplicación necesita acceder a su ubicación para mostrar su posición en el mapa.",
+        "NSLocationAlwaysUsageDescription": "La aplicación necesita acceder a su ubicación incluso cuando está en segundo plano.",
+        "NSLocationWhenInUseUsageDescription": "La aplicación necesita acceder a su ubicación cuando esté en uso."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "La aplicación necesita acceder a su ubicación para mostrar su posición en el mapa.",
+          "locationAlwaysPermission": "La aplicación necesita acceder a su ubicación incluso cuando está en segundo plano.",
+          "locationWhenInUsePermission": "La aplicación necesita acceder a su ubicación cuando esté en uso."
+        }
+      ]
+    ]
   }
 }
