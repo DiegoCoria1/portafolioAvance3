@@ -1,3 +1,4 @@
+// App.js
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -14,6 +15,7 @@ import PerfilScreen from './screens/PerfilScreen';
 import ConfiguracionScreen from './screens/ConfiguracionScreen';
 import CargaScreen from './screens/CargaScreen';
 import NotificacionScreen from './screens/NotificacionScreen'; // Nueva pantalla de notificaciones
+import DetalleNotificacion from './screens/DetalleNotificacion'; // Nueva pantalla de detalle de notificación
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -88,6 +90,11 @@ function MainApp() {
           name="Notificaciones" // Nueva pantalla registrada
           component={NotificacionScreen}
           options={{ title: 'Notificaciones' }}
+        />
+        <Stack.Screen
+          name="DetalleNotificacion" // Registrar la nueva pantalla
+          component={DetalleNotificacion}
+          options={{ title: 'Detalle de Notificación' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
