@@ -1,21 +1,27 @@
-import React from 'react';
+// ./screens/PrincipalScreen.js
+import React, { useContext } from 'react';
 import { Feather } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Card, Paragraph, Avatar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { NotificationContext } from '../contexts/NotificationContext';
 
 const PrincipalScreen = () => {
   const navigation = useNavigation();
+  const { hasNewNotifications } = useContext(NotificationContext);
 
   return (
     <View style={styles.container}>
-      <Feather
-        name="bell"
-        size={24}
-        color="#228B22"
-        style={{ position: 'absolute', top: 40, right: 20 }}
-        onPress={() => navigation.navigate('Notificaciones')} // Cambiado a "Notificaciones"
-      />
+      <View style={styles.bellContainer}>
+        <Feather
+          name="bell"
+          size={24}
+          color="#228B22"
+          onPress={() => navigation.navigate('Notificaciones')}
+        />
+        {hasNewNotifications && <View style={styles.redDot} />}
+      </View>
+
       {/* Primera tarjeta con Avatar.Icon */}
       <Card style={styles.card}>
         <Card.Title
@@ -60,6 +66,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     backgroundColor: '#F5F5DC',
+  },
+  bellContainer: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+  },
+  redDot: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#FF0000', // Rojo
   },
   card: {
     width: '90%',

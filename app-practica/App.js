@@ -17,6 +17,9 @@ import CargaScreen from './screens/CargaScreen';
 import NotificacionScreen from './screens/NotificacionScreen'; // Nueva pantalla de notificaciones
 import DetalleNotificacion from './screens/DetalleNotificacion'; // Nueva pantalla de detalle de notificación
 
+// Importar el Contexto
+import { NotificationProvider } from './contexts/NotificationContext';
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -103,8 +106,10 @@ function MainApp() {
 
 export default function App() {
   return (
-    <PaperProvider>
-      <MainApp />
-    </PaperProvider>
+    <NotificationProvider>
+      <PaperProvider>
+        <MainApp />
+      </PaperProvider>
+    </NotificationProvider>
   );
 }

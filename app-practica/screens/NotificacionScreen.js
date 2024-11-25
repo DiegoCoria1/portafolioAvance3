@@ -1,5 +1,5 @@
 // ./screens/NotificacionScreen.js
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,13 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { Chip, Button, Switch } from 'react-native-paper';
+import { Chip } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
+import { NotificationContext } from '../contexts/NotificationContext';
 
 const NotificacionScreen = ({ navigation }) => {
+  const { setHasNewNotifications } = useContext(NotificationContext);
+
   const [notifications, setNotifications] = useState([
     { id: '1', title: 'Nueva campaña ecológica', type: 'campaña', read: false },
     { id: '2', title: 'Retiro de residuos completado', type: 'retiro', read: false },
@@ -68,6 +71,15 @@ const NotificacionScreen = ({ navigation }) => {
       <Text style={styles.notificationType}>{item.type.toUpperCase()}</Text>
     </TouchableOpacity>
   );
+
+  // Cuando la pantalla se enfoca, marcamos que ya no hay nuevas notificaciones
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setHasNewNotifications(false);
+    });
+
+    return unsubscribe;
+  }, [navigation, setHasNewNotifications]);
 
   return (
     <View style={styles.container}>
