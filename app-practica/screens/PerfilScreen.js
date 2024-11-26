@@ -1,4 +1,5 @@
 // ./screens/PerfilScreen.js
+
 import React, { useState } from 'react';
 import {
   View,
@@ -11,7 +12,7 @@ import {
   ScrollView,
   ImageBackground,
 } from 'react-native';
-import { Avatar, Button, Card, IconButton } from 'react-native-paper';
+import { Avatar, Button, Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
 
@@ -107,6 +108,7 @@ const PerfilScreen = ({ navigation }) => {
               value={newUsername}
               onChangeText={setNewUsername}
               placeholder="Nuevo nombre"
+              placeholderTextColor="#999"
             />
             <Button
               mode="contained"
@@ -152,9 +154,6 @@ const ContactInfo = () => (
       <ContactItem icon="email" text="correousuario@gmail.com" />
       <ContactItem icon="facebook" text="@Facebook" />
       <ContactItem icon="instagram" text="@Instagram" />
-      {/* Posible lugar donde podrías haber añadido texto sin <Text> */}
-      {/* Por ejemplo: "Contacto" */}
-      {/* <View>Contacto</View> --> Esto causaría el error */}
     </Card.Content>
   </Card>
 );
@@ -242,10 +241,11 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 70,
+    paddingVertical: 70,
     borderBottomLeftRadius: 22,
     borderBottomRightRadius: 22,
     overflow: 'hidden',
+    position: 'relative',
   },
   backgroundImage: {
     resizeMode: 'cover',
@@ -259,14 +259,27 @@ const styles = StyleSheet.create({
     top: 50,
     right: 18,
   },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: 10,
+  },
   avatar: {
-    marginBottom: 3,
     backgroundColor: '#C8E6C9',
+  },
+  cameraButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#4CAF50',
+    borderRadius: 20,
+    padding: 6,
+    elevation: 3,
   },
   usernameContainer: {
     flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 10,
   },
   username: {
     fontSize: 24,
@@ -279,12 +292,20 @@ const styles = StyleSheet.create({
   jobTitle: {
     fontSize: 16,
     color: '#E8F5E9',
+    textAlign: 'center',
+    marginTop: 4,
   },
   card: {
-    margin: 15,
+    marginHorizontal: 15,
+    marginVertical: 10,
     borderRadius: 15,
     backgroundColor: '#ffffff',
     elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    paddingVertical: 10,
   },
   cardTitle: {
     fontSize: 18,
@@ -298,9 +319,19 @@ const styles = StyleSheet.create({
   },
   stat: {
     alignItems: 'center',
+    width: '45%', // Ajuste de ancho para mejor distribución
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   statNumber: {
-    fontSize: 20,
+    fontSize: 24, // Aumentado para mayor prominencia
     fontWeight: 'bold',
     color: '#388E3C',
     marginVertical: 5,
@@ -337,6 +368,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#388E3C',
   },
   input: {
     width: '100%',
@@ -345,26 +377,16 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginBottom: 20,
     fontSize: 16,
+    color: '#333',
   },
   saveButton: {
     backgroundColor: '#388E3C',
     marginBottom: 10,
+    width: '100%',
   },
   cancelButton: {
-    color: 'black',
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginBottom: 10,
-  },
-  cameraButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#4CAF50',
-    borderRadius: 20,
-    padding: 6,
-    elevation: 3,
+    color: '#388E3C',
+    fontSize: 16,
   },
   contactItem: {
     flexDirection: 'row',
