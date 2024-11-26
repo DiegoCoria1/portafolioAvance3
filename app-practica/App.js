@@ -1,4 +1,5 @@
 // App.js
+
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,9 +17,12 @@ import ConfiguracionScreen from './screens/ConfiguracionScreen';
 import CargaScreen from './screens/CargaScreen';
 import NotificacionScreen from './screens/NotificacionScreen'; // Nueva pantalla de notificaciones
 import DetalleNotificacion from './screens/DetalleNotificacion'; // Nueva pantalla de detalle de notificación
+import DenunciaScreen from './screens/DenunciaScreen'; // Asegúrate de importar DenunciaScreen
 
-// Importar el Contexto
+// Importar los Contextos
 import { NotificationProvider } from './contexts/NotificationContext';
+import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -99,6 +103,16 @@ function MainApp() {
           component={DetalleNotificacion}
           options={{ title: 'Detalle de Notificación' }}
         />
+        <Stack.Screen
+          name="Retiro"
+          component={RetiroScreen}
+          options={{ title: 'Solicitar Retiro de Basura' }}
+        />
+        <Stack.Screen
+          name="Denuncia" // Registrar DenunciaScreen
+          component={DenunciaScreen}
+          options={{ title: 'Denuncia de Basura' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -106,10 +120,14 @@ function MainApp() {
 
 export default function App() {
   return (
-    <NotificationProvider>
-      <PaperProvider>
-        <MainApp />
-      </PaperProvider>
-    </NotificationProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <NotificationProvider>
+          <PaperProvider>
+            <MainApp />
+          </PaperProvider>
+        </NotificationProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
