@@ -68,16 +68,28 @@ const RetiroScreen = () => {
 
   // Función para calcular el dígito verificador del RUT
   const calcularDV = (rutNumerico) => {
+    // Asegurar que el RUT numérico tenga 8 dígitos agregando ceros a la izquierda
+    const rutPadded = rutNumerico.padStart(8, '0');
+    console.log(`RUT Padded: ${rutPadded}`);
+    
     let suma = 0;
     let multiplicador = 2;
 
-    for (let i = rutNumerico.length - 1; i >= 0; i--) {
-      suma += parseInt(rutNumerico.charAt(i)) * multiplicador;
+    for (let i = rutPadded.length - 1; i >= 0; i--) {
+      const digit = parseInt(rutPadded.charAt(i));
+      if (isNaN(digit)) {
+        // Si no es un dígito, retorna un valor inválido
+        return null;
+      }
+      suma += digit * multiplicador;
+      console.log(`Multiplicando: ${digit} * ${multiplicador} = ${digit * multiplicador}`);
       multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
     }
 
+    console.log(`Suma total: ${suma}`);
     const resto = suma % 11;
     const dv = 11 - resto;
+    console.log(`Resto: ${resto}, DV calculado: ${dv}`);
 
     if (dv === 11) return '0';
     if (dv === 10) return 'K';
@@ -88,13 +100,21 @@ const RetiroScreen = () => {
   const validateRut = (rutCompleto) => {
     const rutRegex = /^\d{7,8}-[0-9Kk]$/;
     if (!rutRegex.test(rutCompleto)) {
+      console.log('Formato de RUT inválido.');
       return false;
     }
 
     const [rutNumerico, dv] = rutCompleto.split('-');
     const dvCalculado = calcularDV(rutNumerico);
 
-    return dv.toUpperCase() === dvCalculado;
+    if (dvCalculado === null) {
+      console.log('RUT numérico contiene caracteres no válidos.');
+      return false;
+    }
+
+    const esValido = dv.toUpperCase() === dvCalculado;
+    console.log(`DV ingresado: ${dv.toUpperCase()}, DV calculado: ${dvCalculado}, ¿Es válido? ${esValido}`);
+    return esValido;
   };
 
   const hasErrors = () => {
@@ -187,6 +207,27 @@ const RetiroScreen = () => {
     }
   };
 
+  // Función de formateo del RUT
+  const formatRut = (input) => {
+    // Remover todos los caracteres que no sean dígitos o 'K'
+    let cleaned = input.toUpperCase().replace(/[^0-9K]/g, '');
+
+    // Si la longitud es 0, retornar vacío
+    if (cleaned.length === 0) return '';
+
+    // Insertar guion antes del último carácter si la longitud es mayor a 1
+    if (cleaned.length > 1) {
+      cleaned = cleaned.slice(0, -1) + '-' + cleaned.slice(-1);
+    }
+
+    // Limitar a 10 caracteres (8 dígitos + guion + DV)
+    if (cleaned.length > 10) {
+      cleaned = cleaned.slice(0, 10);
+    }
+
+    return cleaned;
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -200,19 +241,20 @@ const RetiroScreen = () => {
 
         {/* Nombre Completo */}
         <TextInput
-          label="Nombre"
+          label={
+            <>
+              Nombre <Text style={styles.required}>*</Text>
+            </>
+          }
           value={nombre}
           onChangeText={(text) => setNombre(text)}
           style={styles.input}
           mode="outlined"
           placeholder="Juan Pérez"
         />
-        {/* Si decides hacerlo obligatorio, descomenta las siguientes líneas */}
-        {/*
         <HelperText type="error" visible={nombre.trim().length === 0}>
           Por favor, ingresa tu nombre completo.
         </HelperText>
-        */}
 
         {/* RUT */}
         <TextInput
@@ -223,23 +265,15 @@ const RetiroScreen = () => {
           }
           value={rut}
           onChangeText={(text) => {
-            // Permitir solo números y 'K' o 'k', y formatear con guion
-            let formattedText = text
-              .toUpperCase()
-              .replace(/[^0-9K]/g, '');
-
-            if (formattedText.length > 1) {
-              formattedText = formattedText.slice(0, -1) + '-' + formattedText.slice(-1);
-            }
-
-            setRut(formattedText);
+            const formatted = formatRut(text);
+            setRut(formatted);
           }}
           style={[
             styles.input,
             rut.trim().length > 0 && !validateRut(rut) ? styles.inputError : null,
           ]}
           mode="outlined"
-          placeholder="1234567-8 o 12345678-9"
+          placeholder="12345678-9"
           keyboardType="default"
           maxLength={10} // 8 dígitos + guion + dígito verificador
         />
@@ -329,23 +363,12 @@ const RetiroScreen = () => {
             'baterías',
             'residuos sanitarios',
           ].map((tipo, index) => (
-            <TouchableOpacity
+            <TipoBasuraItem
               key={index}
-              style={[
-                styles.tipoBasuraButton,
-                tipoBasura.includes(tipo) ? styles.tipoBasuraButtonSelected : null,
-              ]}
+              tipo={tipo}
+              isSelected={tipoBasura.includes(tipo)}
               onPress={() => toggleTipoBasura(tipo)}
-            >
-              <Text
-                style={[
-                  styles.tipoBasuraText,
-                  tipoBasura.includes(tipo) ? styles.tipoBasuraTextSelected : null,
-                ]}
-              >
-                {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
-              </Text>
-            </TouchableOpacity>
+            />
           ))}
         </View>
         <HelperText type="error" visible={tipoBasura.length === 0}>
