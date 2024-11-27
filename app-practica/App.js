@@ -21,8 +21,9 @@ import DenunciaScreen from './screens/DenunciaScreen'; // Asegúrate de importar
 
 // Importar los Contextos
 import { NotificationProvider } from './contexts/NotificationContext';
-import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { AppProvider } from './contexts/AppContext'; // Importar AppProvider
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -37,7 +38,7 @@ function TabNavigator() {
           let iconName;
 
           if (route.name === 'Camara') {
-            iconName = 'camera';
+            iconName = 'alert-circle'; // Ícono más relacionado con denuncias
           } else if (route.name === 'Mapa') {
             iconName = 'map-pin';
           } else if (route.name === 'Principal') {
@@ -55,7 +56,12 @@ function TabNavigator() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Camara" component={CamaraScreen} />
+      {/* Cambiar la etiqueta de "Camara" a "Denuncia" y actualizar el ícono */}
+      <Tab.Screen
+        name="Camara"
+        component={CamaraScreen}
+        options={{ tabBarLabel: 'Denuncia' }} // Etiqueta personalizada
+      />
       <Tab.Screen name="Mapa" component={MapaScreen} />
       <Tab.Screen name="Principal" component={PrincipalScreen} />
       <Tab.Screen name="Retiro" component={RetiroScreen} />
@@ -121,13 +127,15 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <ThemeProvider>
-        <NotificationProvider>
-          <PaperProvider>
-            <MainApp />
-          </PaperProvider>
-        </NotificationProvider>
-      </ThemeProvider>
+      <AppProvider> 
+        <ThemeProvider>
+          <NotificationProvider>
+            <PaperProvider>
+              <MainApp />
+            </PaperProvider>
+          </NotificationProvider>
+        </ThemeProvider>
+      </AppProvider>
     </AuthProvider>
   );
 }
