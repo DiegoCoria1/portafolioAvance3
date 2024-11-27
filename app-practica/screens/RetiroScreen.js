@@ -1,4 +1,5 @@
 // ./screens/RetiroScreen.js
+
 import React, { useState, useContext } from 'react';
 import {
   View,
@@ -8,6 +9,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from 'react-native';
 import {
   TextInput,
@@ -18,11 +20,13 @@ import {
   RadioButton,
 } from 'react-native-paper';
 import { NotificationContext } from '../contexts/NotificationContext';
+import { Calendar } from 'react-native-calendars';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const RetiroScreen = () => {
   const { setHasNewNotifications } = useContext(NotificationContext);
 
-  const [nombre, setNombre] = useState('');
+  const [nombre, setNombre] = useState(''); // Campo Nombre
   const [rut, setRut] = useState('');
   const [telefono, setTelefono] = useState('');
   const [email, setEmail] = useState('');
@@ -33,6 +37,34 @@ const RetiroScreen = () => {
   const [comentarios, setComentarios] = useState('');
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [markedDates, setMarkedDates] = useState({});
+  const [modalVisible, setModalVisible] = useState(false); // Estado para el modal
+
+  // Definir días disponibles para retiro (ejemplo)
+  const availableDates = {
+    '2024-11-10': { marked: true, dotColor: '#388E3C' },
+    '2024-11-15': { marked: true, dotColor: '#388E3C' },
+    '2024-11-20': { marked: true, dotColor: '#388E3C' },
+    '2024-11-21': { marked: true, dotColor: '#388E3C' },
+    '2024-11-22': { marked: true, dotColor: '#388E3C' },
+    '2024-11-23': { marked: true, dotColor: '#388E3C' },
+    '2024-11-24': { marked: true, dotColor: '#388E3C' },
+    '2024-11-25': { marked: true, dotColor: '#388E3C' },
+    '2024-11-26': { marked: true, dotColor: '#388E3C' },
+    '2024-11-27': { marked: true, dotColor: '#388E3C' },
+    '2024-12-10': { marked: true, dotColor: '#388E3C' },
+    '2024-12-15': { marked: true, dotColor: '#388E3C' },
+    '2024-12-20': { marked: true, dotColor: '#388E3C' },
+    '2024-12-21': { marked: true, dotColor: '#388E3C' },
+    '2024-12-22': { marked: true, dotColor: '#388E3C' },
+    '2024-12-23': { marked: true, dotColor: '#388E3C' },
+    '2024-12-24': { marked: true, dotColor: '#388E3C' },
+    '2024-12-25': { marked: true, dotColor: '#388E3C' },
+    '2024-12-26': { marked: true, dotColor: '#388E3C' },
+    '2024-12-27': { marked: true, dotColor: '#388E3C' },
+    // Añade más fechas según tu disponibilidad
+  };
 
   // Función para calcular el dígito verificador del RUT
   const calcularDV = (rutNumerico) => {
@@ -67,13 +99,12 @@ const RetiroScreen = () => {
 
   const hasErrors = () => {
     return (
-      nombre.trim().length < 3 ||
       !validateRut(rut.trim()) ||
-      !/^\d{9}$/.test(telefono.trim()) ||
       !/\S+@\S+\.\S+/.test(email.trim()) ||
       direccion.trim().length === 0 ||
       tipoBasura.length === 0 ||
       !aceptaTerminos ||
+      !selectedDate ||
       isSubmitting
     );
   };
@@ -102,6 +133,7 @@ const RetiroScreen = () => {
       //     tipoBasura,
       //     frecuencia,
       //     comentarios,
+      //     fechaRetiro: selectedDate,
       //   }),
       // });
 
@@ -122,6 +154,8 @@ const RetiroScreen = () => {
       setFrecuencia('puntual');
       setComentarios('');
       setAceptaTerminos(false);
+      setSelectedDate('');
+      setMarkedDates({});
     } catch (error) {
       Alert.alert('Error', 'Hubo un problema al enviar la solicitud. Inténtalo de nuevo.');
     } finally {
@@ -134,6 +168,22 @@ const RetiroScreen = () => {
       setTipoBasura(tipoBasura.filter((item) => item !== tipo));
     } else {
       setTipoBasura([...tipoBasura, tipo]);
+    }
+  };
+
+  const onDayPress = (day) => {
+    if (availableDates[day.dateString]) {
+      setSelectedDate(day.dateString);
+      setMarkedDates({
+        [day.dateString]: {
+          selected: true,
+          selectedColor: '#388E3C',
+          dotColor: '#ffffff',
+          marked: true,
+        },
+      });
+    } else {
+      Alert.alert('No Disponible', 'Este día no está disponible para retiro.');
     }
   };
 
@@ -150,36 +200,51 @@ const RetiroScreen = () => {
 
         {/* Nombre Completo */}
         <TextInput
-          label="Nombre Completo"
+          label="Nombre"
           value={nombre}
           onChangeText={(text) => setNombre(text)}
           style={styles.input}
           mode="outlined"
+          placeholder="Juan Pérez"
         />
-        <HelperText type="error" visible={nombre.length > 0 && nombre.length < 3}>
-          El nombre debe tener al menos 3 caracteres.
+        {/* Si decides hacerlo obligatorio, descomenta las siguientes líneas */}
+        {/*
+        <HelperText type="error" visible={nombre.trim().length === 0}>
+          Por favor, ingresa tu nombre completo.
         </HelperText>
+        */}
 
         {/* RUT */}
         <TextInput
-          label="RUT"
+          label={
+            <>
+              RUT <Text style={styles.required}>*</Text>
+            </>
+          }
           value={rut}
           onChangeText={(text) => {
-            // Permitir solo números y 'K' o 'k'
-            const formattedText = text
+            // Permitir solo números y 'K' o 'k', y formatear con guion
+            let formattedText = text
               .toUpperCase()
-              .replace(/[^0-9K]/g, '')
-              .replace(/(\d{1,8})([0-9K])$/, '$1-$2');
+              .replace(/[^0-9K]/g, '');
+
+            if (formattedText.length > 1) {
+              formattedText = formattedText.slice(0, -1) + '-' + formattedText.slice(-1);
+            }
+
             setRut(formattedText);
           }}
-          style={styles.input}
+          style={[
+            styles.input,
+            rut.trim().length > 0 && !validateRut(rut) ? styles.inputError : null,
+          ]}
           mode="outlined"
-          placeholder="20010440-4"
-          keyboardType="numeric"
+          placeholder="1234567-8 o 12345678-9"
+          keyboardType="default"
           maxLength={10} // 8 dígitos + guion + dígito verificador
         />
-        <HelperText type="error" visible={rut.length > 0 && !validateRut(rut)}>
-          RUT inválido. Asegúrate de ingresar el formato correcto (e.g., 20010440-4).
+        <HelperText type="error" visible={rut.trim().length > 0 && !validateRut(rut)}>
+          RUT inválido. Formatos permitidos: 1234567-8 o 12345678-9.
         </HelperText>
 
         {/* Teléfono */}
@@ -199,24 +264,38 @@ const RetiroScreen = () => {
 
         {/* Correo Electrónico */}
         <TextInput
-          label="Correo Electrónico"
+          label={
+            <>
+              Correo Electrónico <Text style={styles.required}>*</Text>
+            </>
+          }
           value={email}
           onChangeText={(text) => setEmail(text)}
-          style={styles.input}
+          style={[
+            styles.input,
+            email.trim().length > 0 && !/\S+@\S+\.\S+/.test(email) ? styles.inputError : null,
+          ]}
           mode="outlined"
           keyboardType="email-address"
           placeholder="ejemplo@correo.com"
         />
-        <HelperText type="error" visible={email.length > 0 && !/\S+@\S+\.\S+/.test(email)}>
+        <HelperText type="error" visible={email.trim().length > 0 && !/\S+@\S+\.\S+/.test(email)}>
           Correo electrónico inválido.
         </HelperText>
 
         {/* Dirección */}
         <TextInput
-          label="Dirección"
+          label={
+            <>
+              Dirección <Text style={styles.required}>*</Text>
+            </>
+          }
           value={direccion}
           onChangeText={(text) => setDireccion(text)}
-          style={styles.input}
+          style={[
+            styles.input,
+            direccion.trim().length === 0 ? styles.inputError : null,
+          ]}
           mode="outlined"
           placeholder="Calle Falsa 123"
         />
@@ -235,7 +314,9 @@ const RetiroScreen = () => {
         />
 
         {/* Tipo de Basura */}
-        <Text style={styles.label}>Tipo de Basura</Text>
+        <Text style={styles.label}>
+          Tipo de Basura <Text style={styles.required}>*</Text>
+        </Text>
         <View style={styles.tipoBasuraContainer}>
           {[
             'orgánico',
@@ -252,14 +333,14 @@ const RetiroScreen = () => {
               key={index}
               style={[
                 styles.tipoBasuraButton,
-                tipoBasura.includes(tipo) && styles.tipoBasuraButtonSelected,
+                tipoBasura.includes(tipo) ? styles.tipoBasuraButtonSelected : null,
               ]}
               onPress={() => toggleTipoBasura(tipo)}
             >
               <Text
                 style={[
                   styles.tipoBasuraText,
-                  tipoBasura.includes(tipo) && styles.tipoBasuraTextSelected,
+                  tipoBasura.includes(tipo) ? styles.tipoBasuraTextSelected : null,
                 ]}
               >
                 {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
@@ -295,6 +376,44 @@ const RetiroScreen = () => {
           </View>
         </RadioButton.Group>
 
+        {/* Calendario para Selección de Fecha */}
+        <Text style={styles.label}>
+          Selecciona una Fecha para Retiro <Text style={styles.required}>*</Text>
+        </Text>
+        <Calendar
+          onDayPress={onDayPress}
+          markedDates={{
+            ...availableDates,
+            ...markedDates,
+            ...Object.keys(availableDates).reduce((acc, date) => {
+              if (!markedDates[date] && !selectedDate) {
+                acc[date] = { ...availableDates[date], textColor: '#FF0000' }; // Días no disponibles en rojo
+              }
+              return acc;
+            }, {}),
+          }}
+          markingType={'custom'}
+          theme={{
+            selectedDayBackgroundColor: '#388E3C',
+            selectedDayTextColor: '#ffffff',
+            todayTextColor: '#388E3C',
+            arrowColor: '#388E3C',
+            monthTextColor: '#388E3C',
+            textDayFontSize: 16,
+            textMonthFontSize: 18,
+            textDayHeaderFontSize: 14,
+            dotColor: '#388E3C',
+            selectedDotColor: '#ffffff',
+          }}
+          style={styles.calendar}
+          disableAllTouchEventsForDisabledDays={true}
+        />
+        {!selectedDate && (
+          <HelperText type="error" visible={true}>
+            Por favor, selecciona una fecha para el retiro.
+          </HelperText>
+        )}
+
         {/* Comentarios o Instrucciones Especiales */}
         <TextInput
           label="Comentarios o Instrucciones Especiales"
@@ -314,6 +433,9 @@ const RetiroScreen = () => {
             onPress={() => setAceptaTerminos(!aceptaTerminos)}
           />
           <Text>Acepto los términos y condiciones.</Text>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Icon name="help-circle-outline" size={24} color="#388E3C" style={styles.helpIcon} />
+          </TouchableOpacity>
         </View>
         <HelperText type="error" visible={!aceptaTerminos}>
           Debes aceptar los términos y condiciones para continuar.
@@ -329,10 +451,77 @@ const RetiroScreen = () => {
         >
           Enviar Solicitud
         </Button>
+
+        {/* Modal de Términos y Condiciones */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalView}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Términos y Condiciones</Text>
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <Icon name="close" size={24} color="#000" />
+                </TouchableOpacity>
+              </View>
+              <ScrollView style={styles.modalContent}>
+                <Text style={styles.modalText}>
+                  **Términos y Condiciones de Servicio**
+
+                  1. **Aceptación de Términos:** Al utilizar esta aplicación, aceptas cumplir y estar obligado por estos términos y condiciones.
+
+                  2. **Uso del Servicio:** El servicio de retiro de basura está sujeto a disponibilidad y a las fechas seleccionadas por el usuario a través del calendario.
+
+                  3. **Responsabilidad:** La empresa no se hace responsable por cualquier daño o pérdida que pueda surgir del uso de este servicio.
+
+                  4. **Privacidad:** Toda la información proporcionada será utilizada exclusivamente para la gestión de solicitudes de retiro de basura y no será compartida con terceros sin consentimiento.
+
+                  5. **Modificaciones:** Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones serán efectivas al ser publicadas en esta sección.
+
+                  6. **Contacto:** Para cualquier duda o consulta, puedes contactarnos a través de nuestro correo electrónico soporte@tuapp.com.
+                </Text>
+              </ScrollView>
+              <Button
+                mode="contained"
+                onPress={() => setModalVisible(false)}
+                style={styles.modalButton}
+              >
+                Cerrar
+              </Button>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
+
+/**
+ * Componente reutilizable para un ítem de tipo de basura
+ */
+const TipoBasuraItem = ({ tipo, isSelected, onPress }) => (
+  <TouchableOpacity
+    style={[
+      styles.tipoBasuraButton,
+      isSelected ? styles.tipoBasuraButtonSelected : null,
+    ]}
+    onPress={onPress}
+  >
+    <Text
+      style={[
+        styles.tipoBasuraText,
+        isSelected ? styles.tipoBasuraTextSelected : null,
+      ]}
+    >
+      {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+    </Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -350,8 +539,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2E7D32',
   },
+  required: {
+    color: 'red',
+  },
   input: {
     marginBottom: 10,
+  },
+  inputError: {
+    borderColor: 'red',
   },
   label: {
     fontSize: 16,
@@ -366,7 +561,7 @@ const styles = StyleSheet.create({
   },
   tipoBasuraButton: {
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#2E7D32',
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 15,
@@ -378,7 +573,7 @@ const styles = StyleSheet.create({
     borderColor: '#2E7D32',
   },
   tipoBasuraText: {
-    color: '#000',
+    color: '#2E7D32',
     fontSize: 14,
   },
   tipoBasuraTextSelected: {
@@ -400,8 +595,60 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
+  helpIcon: {
+    marginLeft: 5,
+  },
   button: {
     marginTop: 10,
+    backgroundColor: '#2E7D32',
+    paddingVertical: 5,
+  },
+  calendar: {
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  contactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  contactText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#333',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    width: '85%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+  },
+  modalContent: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  modalButton: {
     backgroundColor: '#2E7D32',
     paddingVertical: 5,
   },
