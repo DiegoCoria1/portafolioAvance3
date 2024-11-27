@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback, // Importado correctamente
   Alert,
   ScrollView,
   ImageBackground,
@@ -24,6 +25,12 @@ const PerfilScreen = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState(
     'https://cdn-icons-png.flaticon.com/512/8810/8810110.png'
   );
+
+  // Estados para el inicio de sesión
+  const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleImagePick = () => {
     launchImageLibrary(
@@ -52,6 +59,39 @@ const PerfilScreen = ({ navigation }) => {
     } else {
       Alert.alert('Error', 'El nombre no puede estar vacío.');
     }
+  };
+
+  // Funciones para manejar el inicio de sesión
+  const openLoginModal = () => {
+    setEmail('');
+    setPassword('');
+    setIsLoginModalVisible(true);
+  };
+
+  const closeLoginModal = () => {
+    setIsLoginModalVisible(false);
+  };
+
+  const handleLogin = () => {
+    // Validación simple de correo y contraseña
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Por favor, ingresa un correo electrónico válido.');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    // Aquí deberías implementar la lógica de autenticación real
+    // Por ejemplo, llamar a una API para verificar las credenciales
+    // Para este ejemplo, asumiremos que las credenciales son válidas
+
+    // Si las credenciales son válidas:
+    setIsLoggedIn(true);
+    setIsLoginModalVisible(false);
+    Alert.alert('Éxito', 'Has iniciado sesión correctamente.');
   };
 
   return (
@@ -128,14 +168,95 @@ const PerfilScreen = ({ navigation }) => {
         </View>
       </Modal>
 
+      {/* Modal para inicio de sesión */}
+      <Modal
+        transparent
+        visible={isLoginModalVisible}
+        animationType="slide"
+        onRequestClose={closeLoginModal}
+      >
+        <TouchableWithoutFeedback onPress={closeLoginModal}>
+          <View style={styles.loginModalOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.loginModalContainer}>
+                <Text style={styles.loginModalTitle}>Inicio de Sesión</Text>
+                <TextInput
+                  style={styles.loginInput}
+                  placeholder="Correo Electrónico"
+                  placeholderTextColor="#999"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+                <TextInput
+                  style={styles.loginInput}
+                  placeholder="Contraseña"
+                  placeholderTextColor="#999"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <View style={styles.loginButtonContainer}>
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={handleLogin}
+                    accessible={true}
+                    accessibilityLabel="Ingresar"
+                  >
+                    <Text style={styles.loginButtonText}>Ingresar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.loginCancelButton}
+                    onPress={closeLoginModal}
+                    accessible={true}
+                    accessibilityLabel="Cancelar"
+                  >
+                    <Text style={styles.loginCancelButtonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       {/* Sección de datos de contacto */}
       <ContactInfo />
 
-      {/* Estadísticas personales */}
-      <StatsSection />
+      {/* Botón de Inicio de Sesión / Cerrar Sesión */}
+      <View style={styles.authButtonContainer}>
+        {!isLoggedIn ? (
+          <Button
+            mode="contained"
+            onPress={openLoginModal}
+            style={styles.authButton}
+            accessible={true}
+            accessibilityLabel="Iniciar Sesión"
+          >
+            Iniciar Sesión
+          </Button>
+        ) : (
+          <Button
+            mode="contained"
+            onPress={() => {
+              setIsLoggedIn(false);
+              Alert.alert('Sesión Cerrada', 'Has cerrado sesión exitosamente.');
+            }}
+            style={styles.authButton}
+            accessible={true}
+            accessibilityLabel="Cerrar Sesión"
+          >
+            Cerrar Sesión
+          </Button>
+        )}
+      </View>
 
-      {/* Historial de actividad */}
-      <ActivityLog />
+      {/* Estadísticas personales (Solo visible si está autenticado) */}
+      {isLoggedIn && <StatsSection />}
+
+      {/* Historial de actividad (Solo visible si está autenticado) */}
+      {isLoggedIn && <ActivityLog />}
     </ScrollView>
   );
 };
@@ -397,6 +518,86 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: '#333',
+  },
+  authButtonContainer: {
+    marginHorizontal: 15,
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  authButton: {
+    width: '100%',
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#388E3C',
+  },
+  authButtonText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loginModalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  loginModalContainer: {
+    width: '85%',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+  },
+  loginModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#388E3C',
+    marginBottom: 15,
+  },
+  loginInput: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 16,
+    color: '#333',
+  },
+  loginButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  loginButton: {
+    backgroundColor: '#388E3C',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    marginRight: 10,
+  },
+  loginButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loginCancelButton: {
+    backgroundColor: '#E0E0E0',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    marginLeft: 10,
+  },
+  loginCancelButtonText: {
+    color: '#333',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

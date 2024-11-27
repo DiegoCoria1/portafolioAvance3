@@ -16,9 +16,7 @@ const DetalleNotificacion = ({ route }) => {
         {/* Aquí puedes agregar más detalles si los tienes */}
         <Text style={styles.description}>
           {/* Descripción o contenido adicional de la notificación */}
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-          facilisi. Integer nec odio. Praesent libero. Sed cursus ante dapibus
-          diam.
+          Descripción de la notificación.
         </Text>
       </View>
     </View>
