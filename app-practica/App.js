@@ -1,6 +1,6 @@
 // App.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -15,20 +15,19 @@ import RetiroScreen from './screens/RetiroScreen';
 import PerfilScreen from './screens/PerfilScreen';
 import ConfiguracionScreen from './screens/ConfiguracionScreen';
 import CargaScreen from './screens/CargaScreen';
-import NotificacionScreen from './screens/NotificacionScreen'; // Nueva pantalla de notificaciones
-import DetalleNotificacion from './screens/DetalleNotificacion'; // Nueva pantalla de detalle de notificación
-import DenunciaScreen from './screens/DenunciaScreen'; // Asegúrate de importar DenunciaScreen
+import NotificacionScreen from './screens/NotificacionScreen'; 
+import DetalleNotificacion from './screens/DetalleNotificacion';
+import DenunciaScreen from './screens/DenunciaScreen'; 
 
-// Importar los Contextos
+// Importar Contextos
 import { NotificationProvider } from './contexts/NotificationContext';
-import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
-import { AppProvider } from './contexts/AppContext'; // Importar AppProvider
+import { AppProvider } from './contexts/AppContext'; 
+import { ThemeProvider, ThemeContext } from './contexts/ThemeContext'; 
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Componente para la navegación de las pestañas
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -37,8 +36,8 @@ function TabNavigator() {
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
-          if (route.name === 'Camara') {
-            iconName = 'alert-circle'; // Ícono más relacionado con denuncias
+          if (route.name === 'Denuncia') {
+            iconName = 'alert-circle';
           } else if (route.name === 'Mapa') {
             iconName = 'map-pin';
           } else if (route.name === 'Principal') {
@@ -56,11 +55,10 @@ function TabNavigator() {
         headerShown: false,
       })}
     >
-      {/* Cambiar la etiqueta de "Camara" a "Denuncia" y actualizar el ícono */}
       <Tab.Screen
-        name="Camara"
-        component={CamaraScreen}
-        options={{ tabBarLabel: 'Denuncia' }} // Etiqueta personalizada
+        name="Denuncia"
+        component={DenunciaScreen}
+        options={{ tabBarLabel: 'Denuncia' }}
       />
       <Tab.Screen name="Mapa" component={MapaScreen} />
       <Tab.Screen name="Principal" component={PrincipalScreen} />
@@ -70,71 +68,69 @@ function TabNavigator() {
   );
 }
 
-// Componente principal de la aplicación
 function MainApp() {
+  const { theme } = useContext(ThemeContext); 
+
+  return (
+    <PaperProvider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="TabNavigator"
+            component={TabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Configuracion"
+            component={ConfiguracionScreen}
+            options={{ title: 'Configuración' }}
+          />
+          <Stack.Screen
+            name="Notificaciones"
+            component={NotificacionScreen}
+            options={{ title: 'Notificaciones' }}
+          />
+          <Stack.Screen
+            name="DetalleNotificacion"
+            component={DetalleNotificacion}
+            options={{ title: 'Detalle de Notificación' }}
+          />
+          <Stack.Screen
+            name="Denuncia"
+            component={DenunciaScreen}
+            options={{ title: 'Denuncia de Basura' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+  );
+}
+
+export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Simulamos un tiempo de carga de 5 segundos
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000); // Mostrar la pantalla de carga durante 5 segundos
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
 
   if (isLoading) {
+    // Mientras isLoading sea true, mostramos la pantalla de carga
     return <CargaScreen />;
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="TabNavigator"
-          component={TabNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Configuracion"
-          component={ConfiguracionScreen}
-          options={{ title: 'Configuración' }}
-        />
-        <Stack.Screen
-          name="Notificaciones" // Nueva pantalla registrada
-          component={NotificacionScreen}
-          options={{ title: 'Notificaciones' }}
-        />
-        <Stack.Screen
-          name="DetalleNotificacion" // Registrar la nueva pantalla
-          component={DetalleNotificacion}
-          options={{ title: 'Detalle de Notificación' }}
-        />
-        <Stack.Screen
-          name="Retiro"
-          component={RetiroScreen}
-          options={{ title: 'Solicitar Retiro de Basura' }}
-        />
-        <Stack.Screen
-          name="Denuncia" // Registrar DenunciaScreen
-          component={DenunciaScreen}
-          options={{ title: 'Denuncia de Basura' }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
-
-export default function App() {
-  return (
     <AuthProvider>
-      <AppProvider> 
-        <ThemeProvider>
-          <NotificationProvider>
-            <PaperProvider>
-              <MainApp />
-            </PaperProvider>
-          </NotificationProvider>
-        </ThemeProvider>
+      <AppProvider>
+        <NotificationProvider>
+          <ThemeProvider>
+            <MainApp />
+          </ThemeProvider>
+        </NotificationProvider>
       </AppProvider>
     </AuthProvider>
   );

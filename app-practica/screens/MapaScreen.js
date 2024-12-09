@@ -1,4 +1,4 @@
-// MapaScreen.js
+// screens/MapaScreen.js
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
@@ -13,6 +13,21 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Switch } from 'react-native-paper'; // Importar Switch de react-native-paper
+
+// Importar el componente personalizado para los marcadores verdes y rojos
+import CustomMarker from '../components/CustomMarker'; // Asegúrate de que la ruta sea correcta
+
+// Definir la mapeo de colores para cada tipo de residuo
+const wasteTypeColors = {
+  "Orgánico": "#228B22",           // Verde
+  "Papel/Cartón": "#FFD700",       // Dorado
+  "Plástico": "#FF8C00",           // Naranja oscuro
+  "Vidrio": "#00CED1",             // Turquesa oscuro
+  "Baterías": "#DC143C",           // Carmesí
+  "Químicos": "#8A2BE2",           // Violeta azulado
+  "Electrónicos": "#FF1493",       // Rosa profundo
+  "Residuos Sanitarios": "#A52A2A", // Marrón
+};
 
 // Puntos verdes extraídos del archivo JSON (actualizados con 'types' y 'schedule')
 const waypoints = [
@@ -114,21 +129,26 @@ const MapaScreen = () => {
               latitudeDelta: 0.05,
               longitudeDelta: 0.05,
             }}
-            showsUserLocation={true}
+            showsUserLocation={false} // Desactivar la ubicación por defecto si usas un marcador personalizado
           >
+            {/* Marcador para la ubicación del usuario con marcador personalizado y color rojo */}
             <Marker
               coordinate={{
                 latitude: location.latitude,
                 longitude: location.longitude,
               }}
               title={"Mi ubicación actual"}
-            />
+            >
+              <CustomMarker outerColor="#FF0000" innerColor="#FF0000" /> {/* Rojo */}
+            </Marker>
+
+            {/* Marcadores para los waypoints con marcador personalizado y color verde */}
             {waypoints
               .filter(point => {
                 const activeTypes = Object.keys(activeFilters).filter(type => activeFilters[type]);
                 if (activeTypes.length === 0) return true; // Sin filtros, mostrar todos
                 // Mostrar puntos que tengan al menos uno de los tipos activos
-                return point.types.some(type => activeTypes.includes(type));
+                return point.types.some(type => activeFilters[type]);
               })
               .map((point, index) => (
                 <Marker
@@ -139,7 +159,9 @@ const MapaScreen = () => {
                   }}
                   title={point.title}
                   onPress={() => setSelectedPoint(point)}
-                />
+                >
+                  <CustomMarker outerColor="#228B22" innerColor="#228B22" /> {/* Verde */}
+                </Marker>
               ))}
           </MapView>
 
@@ -156,7 +178,8 @@ const MapaScreen = () => {
                 });
                 setActiveFilters(clearedFilters);
               }}>
-                <Feather name="x-circle" size={20} color="#ff6347" />
+                {/* Cambiar el color del ícono a verde */}
+                <Feather name="x-circle" size={20} color="#228B22" />
               </TouchableOpacity>
             </View>
           )}
@@ -239,7 +262,7 @@ const MapaScreen = () => {
                     style={styles.closeButton}
                     onPress={() => setSelectedPoint(null)}
                   >
-                    <Feather name="x" size={28} color="#000" />
+                    <Feather name="x" size={28} color="#228B22" /> {/* Cambiado a verde */}
                   </TouchableOpacity>
                   <Text style={styles.modalTitle}>{selectedPoint.title}</Text>
                   <Text style={styles.modalSchedule}>{selectedPoint.schedule}</Text>
@@ -269,23 +292,7 @@ const MapaScreen = () => {
                               : "biohazard"
                           }
                           size={32}
-                          color={
-                            type === "Orgánico"
-                              ? "#228B22"
-                              : type === "Papel/Cartón"
-                              ? "#1e90ff"
-                              : type === "Plástico"
-                              ? "#ffd700"
-                              : type === "Vidrio"
-                              ? "#808080"
-                              : type === "Baterías"
-                              ? "#ff6347"
-                              : type === "Químicos"
-                              ? "#ff4500"
-                              : type === "Electrónicos"
-                              ? "#ff8c00"
-                              : "#808080"
-                          }
+                          color={wasteTypeColors[type] || "#228B22"} // Color dinámico
                         />
                         <Text style={styles.iconLabel}>{type}</Text>
                       </TouchableOpacity>
@@ -310,7 +317,7 @@ const MapaScreen = () => {
                     style={styles.closeButton}
                     onPress={() => setSelectedWasteType(null)}
                   >
-                    <Feather name="x" size={28} color="#000" />
+                    <Feather name="x" size={28} color="#228B22" /> {/* Cambiado a verde */}
                   </TouchableOpacity>
                   <Text style={styles.modalTitle}>{selectedWasteType}</Text>
                   <Text style={styles.modalInfo}>

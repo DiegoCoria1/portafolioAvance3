@@ -1,6 +1,7 @@
 // ./contexts/ThemeContext.js
+
 import React, { createContext, useState } from 'react';
-import { DarkTheme, DefaultTheme } from 'react-native-paper';
+import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
 
 export const ThemeContext = createContext();
 
@@ -11,7 +12,7 @@ export const ThemeProvider = ({ children }) => {
     setIsDarkTheme(!isDarkTheme);
   };
 
-  const theme = isDarkTheme ? DarkTheme : DefaultTheme;
+  const theme = isDarkTheme ? PaperDarkTheme : PaperDefaultTheme;
 
   return (
     <ThemeContext.Provider value={{ isDarkTheme, toggleTheme, theme }}>

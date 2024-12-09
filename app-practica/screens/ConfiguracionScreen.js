@@ -1,4 +1,5 @@
 // ./screens/ConfiguracionScreen.js
+
 import React, { useState, useContext } from 'react';
 import {
   View,
