@@ -23,7 +23,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import CustomTextInput from '../components/CustomTextInput'; // Asegúrate de ajustar la ruta según tu estructura de carpetas
+import CustomTextInput from '../components/CustomTextInput'; // Ajusta la ruta según tu estructura de carpetas
 
 const DenunciaScreen = ({ route, navigation }) => {
   const { capturedImage } = route.params || {};
@@ -42,17 +42,16 @@ const DenunciaScreen = ({ route, navigation }) => {
 
   // Función para calcular el dígito verificador del RUT
   const calcularDV = (rutNumerico) => {
-    const rutPadded = rutNumerico.padStart(8, '0');
     let suma = 0;
     let multiplicador = 2;
 
-    for (let i = rutPadded.length - 1; i >= 0; i--) {
-      const digit = parseInt(rutPadded.charAt(i));
+    for (let i = rutNumerico.length - 1; i >= 0; i--) {
+      const digit = parseInt(rutNumerico.charAt(i));
       if (isNaN(digit)) {
         return null;
       }
       suma += digit * multiplicador;
-      multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+      multiplicador = (multiplicador === 7) ? 2 : multiplicador + 1;
     }
 
     const resto = suma % 11;
@@ -63,46 +62,57 @@ const DenunciaScreen = ({ route, navigation }) => {
     return dv.toString();
   };
 
-  // Validación básica del RUT
+  // Validación básica del RUT con rango actualizado
   const validateRut = (rutCompleto) => {
     const rutRegex = /^\d{7,8}-[0-9Kk]$/;
     if (!rutRegex.test(rutCompleto)) {
+      console.log(`Formato inválido: ${rutCompleto}`);
       return false;
     }
 
     const [rutNumerico, dv] = rutCompleto.split('-');
-    const dvCalculado = calcularDV(rutNumerico);
+    const rutNumber = parseInt(rutNumerico, 10);
 
-    if (dvCalculado === null) {
+    // Validar rango entre 1.000.000 y 99.999.999
+    if (rutNumber < 1000000 || rutNumber > 99999999) {
+      console.log(`RUT fuera de rango: ${rutNumber}`);
       return false;
     }
 
-    return dvCalculado === rutCompleto.slice(-1).toUpperCase();
+    const dvCalculado = calcularDV(rutNumerico);
+    console.log(`DV calculado: ${dvCalculado}, DV ingresado: ${dv.toUpperCase()}`);
+
+    if (dvCalculado === null) {
+      console.log(`Error en cálculo del DV para: ${rutCompleto}`);
+      return false;
+    }
+
+    return dvCalculado === dv.toUpperCase();
   };
 
-  // Validación básica de la dirección
+  // Validación de dirección
   const validateAddress = (addr) => {
     return addr.trim().length >= 5;
   };
 
-  // Validación básica del nombre
+  // Validación de nombre
   const validateNombre = (name) => {
     return name.trim().length >= 3;
   };
 
-  // Validación básica del correo electrónico
+  // Validación de correo
   const validateCorreo = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email.trim());
   };
 
-  // Validación básica del teléfono
+  // Validación de teléfono
   const validateTelefono = (phone) => {
     const phoneRegex = /^\d{9}$/; // Asumiendo 9 dígitos
     return phoneRegex.test(phone.trim());
   };
 
-  // Validación básica del comentario adicional (opcional)
+  // Validación de comentario adicional (opcional)
   const validateComentario = (comment) => {
     return comment.trim().length <= 500;
   };
@@ -170,7 +180,7 @@ const DenunciaScreen = ({ route, navigation }) => {
       // Mostrar el modal de éxito
       setSuccessModalVisible(true);
 
-      // Resetear el formulario después de mostrar el modal
+      // Resetear el formulario
       setNombre('');
       setCorreo('');
       setTelefono('');
@@ -256,7 +266,6 @@ const DenunciaScreen = ({ route, navigation }) => {
     try {
       let location = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
-
       let geocode = await Location.reverseGeocodeAsync({ latitude, longitude });
 
       if (geocode.length > 0) {
@@ -287,14 +296,10 @@ const DenunciaScreen = ({ route, navigation }) => {
           style={styles.header}
           imageStyle={styles.backgroundImage}
         >
-          {/* Sombra sobre la imagen de fondo */}
           <View style={styles.overlay} />
-
-          {/* Título dentro del encabezado */}
           <Text style={styles.headerTitle}>Denuncia Mirco-Basural</Text>
         </ImageBackground>
 
-        {/* Card de Fondo */}
         <Card style={styles.card}>
           <Card.Content>
             {/* Sección de Información Personal */}
@@ -558,13 +563,13 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    height: 200, // Altura del encabezado
+    height: 200,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    borderBottomLeftRadius: 25, // Redondeo de esquina inferior izquierda
-    borderBottomRightRadius: 25, // Redondeo de esquina inferior derecha
-    overflow: 'hidden', // Asegura que los bordes redondeados se apliquen correctamente
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    overflow: 'hidden',
   },
   backgroundImage: {
     resizeMode: 'cover',
@@ -573,13 +578,13 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Aumentado a 0.5 para más oscuridad
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#ffffff',
-    zIndex: 1, // Asegura que el texto esté sobre el overlay
+    zIndex: 1,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
