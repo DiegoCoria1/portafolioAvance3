@@ -1,3 +1,4 @@
+// ./screens/NotificacionScreen.js
 import React, { useState, useMemo, useContext, useEffect } from 'react';
 import {
   View,
@@ -102,12 +103,13 @@ const NotificacionScreen = ({ navigation }) => {
             mode="outlined"
             selected={activeFilters[type]}
             onPress={() => toggleFilter(type)}
+            selectedColor="#FFF" // Color del tick y texto cuando está seleccionado
             style={[
               styles.chip,
               activeFilters[type] && styles.chipSelected,
               styles[`chip${type.charAt(0).toUpperCase() + type.slice(1)}`],
             ]}
-            textStyle={{ color: '#FFF' }}
+            textStyle={{ color: '#FFF', fontSize: 16 }} // Texto más grande y blanco
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
           </Chip>
@@ -137,12 +139,15 @@ const styles = StyleSheet.create({
   chip: {
     margin: 4,
     borderWidth: 0,
+    height: 40, // Aumenta la altura
+    justifyContent: 'center', // Centra el contenido verticalmente
+    paddingHorizontal: 12, // Más espacio horizontal
+    borderRadius: 20, // Bordes más redondeados
   },
   chipSelected: {
     backgroundColor: '#2E7D32',
     borderColor: '#2E7D32',
   },
-  // Estilos para cada tipo:
   chipCampaña: {
     backgroundColor: '#1370cd',
   },
