@@ -14,54 +14,23 @@ import * as Location from 'expo-location';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Switch } from 'react-native-paper'; // Importar Switch de react-native-paper
 
-// Importar el componente personalizado para los marcadores verdes y rojos
+// Importar Firestore
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseConfig'; // Ajusta la ruta si es necesario
+
 import CustomMarker from '../components/CustomMarker'; // Asegúrate de que la ruta sea correcta
 
 // Definir la mapeo de colores para cada tipo de residuo
 const wasteTypeColors = {
-  "Orgánico": "#228B22",           // Verde
-  "Papel/Cartón": "#FFD700",       // Dorado
-  "Plástico": "#FF8C00",           // Naranja oscuro
-  "Vidrio": "#00CED1",             // Turquesa oscuro
-  "Baterías": "#DC143C",           // Carmesí
-  "Químicos": "#8A2BE2",           // Violeta azulado
-  "Electrónicos": "#FF1493",       // Rosa profundo
-  "Residuos Sanitarios": "#A52A2A", // Marrón
+  "Orgánico": "#228B22",           
+  "Papel/Cartón": "#FFD700",       
+  "Plástico": "#FF8C00",           
+  "Vidrio": "#00CED1",             
+  "Baterías": "#DC143C",           
+  "Químicos": "#8A2BE2",           
+  "Electrónicos": "#FF1493",       
+  "Residuos Sanitarios": "#A52A2A",
 };
-
-// Puntos verdes extraídos del archivo JSON (actualizados con 'types' y 'schedule')
-const waypoints = [
-  {
-    latitude: -42.466292120161597,
-    longitude: -73.506642400457693,
-    title: "Punto verde mirador",
-    schedule: "09:00 - 17:00",
-    types: ["Orgánico", "Plástico", "Vidrio"],
-  },
-  {
-    latitude: -42.4723554943876,
-    longitude: -73.486943873391695,
-    title: "Nº3 Punto Verde Predio municipal",
-    schedule: "09:00 - 18:00",
-    types: ["Papel/Cartón", "Plástico"],
-  },
-  {
-    latitude: -42.476024060602299,
-    longitude: -73.490452577314102,
-    title: "Nº 1 Punto Verde VBV",
-    schedule: "08:00 - 16:00",
-    types: ["Orgánico", "Baterías"],
-  },
-  // ... Continúa actualizando todos los puntos de manera similar
-  {
-    latitude: -42.433128552154201,
-    longitude: -73.452863174123706,
-    title: "Nº25 Punto verde Vecinal",
-    schedule: "10:00 - 19:00",
-    types: ["Orgánico", "Papel/Cartón"],
-  },
-  // Añade más puntos según sea necesario
-];
 
 const wasteTypesInfo = {
   "Orgánico": "Residuos de origen vegetal o animal, como restos de comida.",
@@ -77,6 +46,9 @@ const wasteTypesInfo = {
 const MapaScreen = () => {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [puntosVerdes, setPuntosVerdes] = useState([]); // Nuevo estado para puntos desde Firestore
+
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [selectedWasteType, setSelectedWasteType] = useState(null);
 
@@ -113,7 +85,22 @@ const MapaScreen = () => {
     requestLocationPermission();
   }, []);
 
-  const wasteTypes = Object.keys(wasteTypesInfo);
+  // Cargar datos de Firestore una vez que tengamos la ubicación o cuando inicie el componente
+  useEffect(() => {
+    const loadPuntosVerdes = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "puntosVerdes"));
+        const puntos = [];
+        querySnapshot.forEach((doc) => {
+          puntos.push({ id: doc.id, ...doc.data() });
+        });
+        setPuntosVerdes(puntos);
+      } catch (e) {
+        console.error("Error al cargar puntos verdes: ", e);
+      }
+    };
+    loadPuntosVerdes();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -129,9 +116,9 @@ const MapaScreen = () => {
               latitudeDelta: 0.05,
               longitudeDelta: 0.05,
             }}
-            showsUserLocation={false} // Desactivar la ubicación por defecto si usas un marcador personalizado
+            showsUserLocation={false} 
           >
-            {/* Marcador para la ubicación del usuario con marcador personalizado y color rojo */}
+            {/* Marcador para la ubicación del usuario con color rojo */}
             <Marker
               coordinate={{
                 latitude: location.latitude,
@@ -139,20 +126,20 @@ const MapaScreen = () => {
               }}
               title={"Mi ubicación actual"}
             >
-              <CustomMarker outerColor="#FF0000" innerColor="#FF0000" /> {/* Rojo */}
+              <CustomMarker outerColor="#FF0000" innerColor="#FF0000" />
             </Marker>
 
-            {/* Marcadores para los waypoints con marcador personalizado y color verde */}
-            {waypoints
+            {/* Marcadores para los puntos verdes desde Firestore */}
+            {puntosVerdes
               .filter(point => {
                 const activeTypes = Object.keys(activeFilters).filter(type => activeFilters[type]);
                 if (activeTypes.length === 0) return true; // Sin filtros, mostrar todos
                 // Mostrar puntos que tengan al menos uno de los tipos activos
-                return point.types.some(type => activeFilters[type]);
+                return point.types && point.types.some(type => activeFilters[type]);
               })
-              .map((point, index) => (
+              .map((point) => (
                 <Marker
-                  key={index}
+                  key={point.id} // Usa el id del documento de Firestore
                   coordinate={{
                     latitude: point.latitude,
                     longitude: point.longitude,
@@ -160,7 +147,7 @@ const MapaScreen = () => {
                   title={point.title}
                   onPress={() => setSelectedPoint(point)}
                 >
-                  <CustomMarker outerColor="#228B22" innerColor="#228B22" /> {/* Verde */}
+                  <CustomMarker outerColor="#228B22" innerColor="#228B22" />
                 </Marker>
               ))}
           </MapView>
@@ -178,7 +165,6 @@ const MapaScreen = () => {
                 });
                 setActiveFilters(clearedFilters);
               }}>
-                {/* Cambiar el color del ícono a verde */}
                 <Feather name="x-circle" size={20} color="#228B22" />
               </TouchableOpacity>
             </View>
@@ -262,12 +248,12 @@ const MapaScreen = () => {
                     style={styles.closeButton}
                     onPress={() => setSelectedPoint(null)}
                   >
-                    <Feather name="x" size={28} color="#228B22" /> {/* Cambiado a verde */}
+                    <Feather name="x" size={28} color="#228B22" />
                   </TouchableOpacity>
                   <Text style={styles.modalTitle}>{selectedPoint.title}</Text>
                   <Text style={styles.modalSchedule}>{selectedPoint.schedule}</Text>
                   <View style={styles.iconsContainer}>
-                    {selectedPoint.types.map((type, index) => (
+                    {selectedPoint.types && selectedPoint.types.map((type, index) => (
                       <TouchableOpacity
                         key={index}
                         style={styles.iconButton}
@@ -292,7 +278,7 @@ const MapaScreen = () => {
                               : "biohazard"
                           }
                           size={32}
-                          color={wasteTypeColors[type] || "#228B22"} // Color dinámico
+                          color={wasteTypeColors[type] || "#228B22"}
                         />
                         <Text style={styles.iconLabel}>{type}</Text>
                       </TouchableOpacity>
@@ -317,7 +303,7 @@ const MapaScreen = () => {
                     style={styles.closeButton}
                     onPress={() => setSelectedWasteType(null)}
                   >
-                    <Feather name="x" size={28} color="#228B22" /> {/* Cambiado a verde */}
+                    <Feather name="x" size={28} color="#228B22" />
                   </TouchableOpacity>
                   <Text style={styles.modalTitle}>{selectedWasteType}</Text>
                   <Text style={styles.modalInfo}>
@@ -340,7 +326,6 @@ const MapaScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center', // Removido para permitir que el MapView ocupe toda la pantalla
     alignItems: 'center',
   },
   map: {
@@ -353,7 +338,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // Estilos para el botón de filtro con ícono
   filterButton: {
     position: 'absolute',
     bottom: 20,
@@ -364,22 +348,20 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 25,
-    elevation: 5, // Sombra para Android
-    shadowColor: '#000', // Sombra para iOS
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
   filterIcon: {
-    marginRight: 8, // Espacio entre el ícono y el texto
+    marginRight: 8,
   },
   filterButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-
-  // Estilos para el modal de filtro
   filterModalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -434,8 +416,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-
-  // Estilos para mostrar los filtros activos
   currentFilterContainer: {
     position: 'absolute',
     top: 50,
@@ -457,8 +437,6 @@ const styles = StyleSheet.create({
     color: '#228B22',
     marginRight: 10,
   },
-
-  // Estilos para el modal de información del punto seleccionado
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -485,7 +463,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalSchedule: {
-    fontSize: 16, // Tamaño ajustable según preferencia
+    fontSize: 16,
     color: '#228B22',
     textAlign: 'center',
     marginTop: 5,
@@ -505,8 +483,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#228B22',
   },
-
-  // Estilos para el modal de información del tipo de residuo seleccionado
   centeredModalContainer: {
     flex: 1,
     justifyContent: 'center',
