@@ -1,16 +1,14 @@
-// ./screens/NotificacionScreen.js
-
 import React, { useState, useMemo, useContext, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Alert,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import { Chip } from 'react-native-paper';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Utilizamos MaterialCommunityIcons para el ícono de eliminar
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Swipeable } from 'react-native-gesture-handler';
 import { NotificationContext } from '../contexts/NotificationContext';
 
 const NotificacionScreen = ({ navigation }) => {
@@ -22,7 +20,6 @@ const NotificacionScreen = ({ navigation }) => {
     { id: '3', title: 'Aviso a la comunidad: reunión', type: 'comunidad', read: false },
     { id: '4', title: 'Nueva campaña de reciclaje', type: 'campaña', read: false },
     { id: '5', title: 'Actualización del programa de residuos', type: 'retiro', read: false },
-    // Puedes agregar más notificaciones según sea necesario
   ]);
 
   const [activeFilters, setActiveFilters] = useState({
@@ -31,7 +28,6 @@ const NotificacionScreen = ({ navigation }) => {
     comunidad: false,
   });
 
-  // Filtrar las notificaciones según los filtros activos
   const filteredNotifications = useMemo(() => {
     const activeTypes = Object.keys(activeFilters).filter(type => activeFilters[type]);
     if (activeTypes.length === 0) return notifications;
@@ -45,54 +41,50 @@ const NotificacionScreen = ({ navigation }) => {
     }));
   };
 
-  // Función para eliminar una notificación por su ID
   const deleteNotification = (id) => {
     setNotifications(prevNotifications => prevNotifications.filter(notification => notification.id !== id));
   };
 
-  const renderItem = (data) => (
+  const renderRightActions = (id) => (
     <TouchableOpacity
-      style={[
-        styles.notificationItem,
-        styles[data.item.type], // Aplica estilos según el tipo de notificación
-        data.item.read ? styles.readItem : null, // Estilo adicional si está leída
-      ]}
-      onPress={() => {
-        // Marcar como leída
-        setNotifications(prevNotifications =>
-          prevNotifications.map(notification =>
-            notification.id === data.item.id ? { ...notification, read: true } : notification
-          )
-        );
-        // Navegar a la pantalla de detalle
-        navigation.navigate('DetalleNotificacion', { notification: data.item });
-      }}
-      accessible={true}
-      accessibilityLabel={`Notificación de tipo ${data.item.type}`}
+      style={styles.deleteButton}
+      onPress={() => deleteNotification(id)}
     >
-      <View style={styles.notificationHeader}>
-        <Text style={[styles.notificationTitle, data.item.read && styles.readNotification]}>
-          {data.item.title}
-        </Text>
-        {!data.item.read && <View style={styles.unreadIndicator} />}
-      </View>
-      <Text style={styles.notificationType}>{data.item.type.toUpperCase()}</Text>
+      <MaterialCommunityIcons name="trash-can" size={28} color="#FFF" />
     </TouchableOpacity>
   );
 
-  const renderHiddenItem = (data) => (
-    <View style={styles.rowBack}>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => deleteNotification(data.item.id)} // Eliminación directa sin confirmación
-      >
-        <MaterialCommunityIcons name="trash-can" size={24} color="#FFF" />
-        <Text style={styles.deleteText}>Eliminar</Text>
-      </TouchableOpacity>
-    </View>
+  const renderNotification = ({ item }) => (
+    <Swipeable
+      renderRightActions={() => renderRightActions(item.id)}
+      overshootRight={false}
+    >
+      <View style={[styles.notificationItem, styles[item.type], item.read && styles.readItem]}>
+        <TouchableOpacity
+          style={styles.notificationContent}
+          onPress={() => {
+            if (!item.read) {
+              setNotifications(prev =>
+                prev.map(notification =>
+                  notification.id === item.id ? { ...notification, read: true } : notification
+                )
+              );
+            }
+            navigation.navigate('DetalleNotificacion', { notification: item });
+          }}
+        >
+          <View style={styles.notificationHeader}>
+            <Text style={[styles.notificationTitle, item.read && styles.readNotification]}>
+              {item.title}
+            </Text>
+            {!item.read && <View style={styles.unreadIndicator} />}
+          </View>
+          <Text style={styles.notificationType}>{item.type.toUpperCase()}</Text>
+        </TouchableOpacity>
+      </View>
+    </Swipeable>
   );
 
-  // Cuando la pantalla se enfoca, marcamos que ya no hay nuevas notificaciones
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setHasNewNotifications(false);
@@ -103,54 +95,28 @@ const NotificacionScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Botones de filtro organizados en una fila */}
       <View style={styles.filterContainer}>
-        <Chip
-          mode="outlined"
-          selected={activeFilters['campaña']}
-          onPress={() => toggleFilter('campaña')}
-          style={[
-            styles.chip,
-            activeFilters['campaña'] ? styles.chipSelected : styles.chipUnselected,
-          ]}
-        >
-          Campañas
-        </Chip>
-        <Chip
-          mode="outlined"
-          selected={activeFilters['retiro']}
-          onPress={() => toggleFilter('retiro')}
-          style={[
-            styles.chip,
-            activeFilters['retiro'] ? styles.chipSelected : styles.chipUnselected,
-          ]}
-        >
-          Retiros
-        </Chip>
-        <Chip
-          mode="outlined"
-          selected={activeFilters['comunidad']}
-          onPress={() => toggleFilter('comunidad')}
-          style={[
-            styles.chip,
-            activeFilters['comunidad'] ? styles.chipSelected : styles.chipUnselected,
-          ]}
-        >
-          Comunidad
-        </Chip>
+        {['campaña', 'retiro', 'comunidad'].map((type) => (
+          <Chip
+            key={type}
+            mode="outlined"
+            selected={activeFilters[type]}
+            onPress={() => toggleFilter(type)}
+            style={[
+              styles.chip,
+              activeFilters[type] && styles.chipSelected,
+              styles[`chip${type.charAt(0).toUpperCase() + type.slice(1)}`],
+            ]}
+            textStyle={{ color: '#FFF' }}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Chip>
+        ))}
       </View>
-
-      {/* Lista de notificaciones filtradas con SwipeListView */}
-      <SwipeListView
+      <FlatList
         data={filteredNotifications}
-        renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
+        renderItem={renderNotification}
         keyExtractor={(item) => item.id}
-        rightOpenValue={-150} // Define la distancia de swipe para revelar el botón
-        disableRightSwipe // Deshabilita el swipe hacia la derecha
-        previewRowKey={'1'}
-        previewOpenValue={-40}
-        previewOpenDelay={3000}
         ListEmptyComponent={<Text style={styles.emptyText}>No hay notificaciones disponibles.</Text>}
       />
     </View>
@@ -161,7 +127,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5DC', // Fondo beige claro
+    backgroundColor: '#F5F5DC',
   },
   filterContainer: {
     flexDirection: 'row',
@@ -170,40 +136,47 @@ const styles = StyleSheet.create({
   },
   chip: {
     margin: 4,
-    borderWidth: 1,
+    borderWidth: 0,
   },
   chipSelected: {
     backgroundColor: '#2E7D32',
     borderColor: '#2E7D32',
   },
-  chipUnselected: {
-    backgroundColor: '#EEE',
-    borderColor: '#CCC',
+  // Estilos para cada tipo:
+  chipCampaña: {
+    backgroundColor: '#1370cd',
+  },
+  chipRetiro: {
+    backgroundColor: '#388E3C',
+  },
+  chipComunidad: {
+    backgroundColor: '#ec7802',
   },
   notificationItem: {
-    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 5,
     borderRadius: 8,
     backgroundColor: '#FFF',
-    // Sombra para Android
+    borderLeftWidth: 5,
     elevation: 2,
-    // Sombra para iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.3,
     shadowRadius: 1,
   },
   campaña: {
-    borderLeftWidth: 5,
-    borderLeftColor: '#1976D2',
+    borderLeftColor: '#1370cd',
   },
   retiro: {
-    borderLeftWidth: 5,
     borderLeftColor: '#388E3C',
   },
   comunidad: {
-    borderLeftWidth: 5,
     borderLeftColor: '#F57C00',
+  },
+  notificationContent: {
+    flex: 1,
+    padding: 15,
   },
   notificationHeader: {
     flexDirection: 'row',
@@ -237,27 +210,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
   },
-  rowBack: {
-    alignItems: 'center',
-    backgroundColor: '#DD2C00', // Color de fondo para la acción de eliminar
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingRight: 15,
-    marginVertical: 5,
-    borderRadius: 8,
-  },
   deleteButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: 150,
+    backgroundColor: '#DD2C00',
     justifyContent: 'center',
-    height: '100%',
-  },
-  deleteText: {
-    color: '#FFF',
-    marginLeft: 10,
-    fontWeight: 'bold',
+    alignItems: 'center',
+    width: 65,
+    height: '88%',
+    borderRadius: 10,
+    margin: 5,
   },
   readItem: {
     opacity: 0.6,

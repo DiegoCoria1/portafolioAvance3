@@ -37,34 +37,28 @@ const PrincipalScreen = () => {
   // Lista de consejos diarios
   const advices = [
     {
-      text:
-        'Recuerda siempre separar tus residuos reciclables y orgánicos para contribuir a un planeta más limpio.',
-      image: require('../assets/consejo1.png'), // Imagen local para el primer consejo
+      text: 'Recuerda siempre separar tus residuos reciclables y orgánicos para contribuir a un planeta más limpio.',
+      image: require('../assets/consejo1.png'), 
     },
     {
-      text:
-        'Apaga las luces cuando salgas de una habitación para ahorrar energía.',
-      image: require('../assets/consejo2.png'), // Imagen local para el segundo consejo
+      text: 'Apaga las luces cuando salgas de una habitación para ahorrar energía.',
+      image: require('../assets/consejo2.png'),
     },
     {
-      text:
-        'Reduce el uso de plásticos desechables llevando tus propios envases reutilizables.',
-      image: require('../assets/consejo3.png'), // Imagen local para el tercer consejo
+      text: 'Reduce el uso de plásticos desechables llevando tus propios envases reutilizables.',
+      image: require('../assets/consejo3.png'),
     },
     {
-      text:
-        'Asegúrate de apagar y desenchufar electrodomésticos que no estás utilizando.',
-      image: require('../assets/consejo4.png'), // Imagen local para el cuarto consejo
+      text: 'Asegúrate de apagar y desenchufar electrodomésticos que no estás utilizando.',
+      image: require('../assets/consejo4.png'),
     },
     {
-      text:
-        'Regala ropa que ya no uses a quienes la necesiten o recíclala.',
-      image: require('../assets/consejo5.png'), // Imagen local para el quinto consejo
+      text: 'Regala ropa que ya no uses a quienes la necesiten o recíclala.',
+      image: require('../assets/consejo5.png'),
     },
     {
-      text:
-        'Haz compost en casa con tus residuos orgánicos y úsalo para nutrir tus plantas.',
-      image: require('../assets/consejo6.png'), // Imagen local para el sexto consejo
+      text: 'Haz compost en casa con tus residuos orgánicos y úsalo para nutrir tus plantas.',
+      image: require('../assets/consejo6.png'),
     },
   ];
 
@@ -73,27 +67,27 @@ const PrincipalScreen = () => {
     {
       id: 1,
       title: 'Nueva Campaña Ecológica',
-      days: 15,
-      date: '15 de noviembre',
-      month: 'Nov',
+      days: 13,
+      date: '13 de diciembre',
+      month: 'Dic',
       description:
-        'Participa en nuestra nueva campaña ecológica para preservar el medio ambiente.',
+        'Participa en nuestra nueva campaña ecológica para el retiro de residuos orgánicos a tu domicilio.',
     },
     {
       id: 2,
       title: 'Campaña de Compostaje',
       days: 10,
-      date: '10 de noviembre',
-      month: 'Nov',
+      date: '10 de enero',
+      month: 'Ene',
       description:
-        'Únete a la campaña de compostaje y aprende a reciclar residuos orgánicos.',
+        'Únete a la campaña de compostaje y aprende a reciclar residuos orgánicos en tu hogar con tu propia compostera.',
     },
     {
       id: 3,
       title: 'Campaña de Reciclaje',
       days: 2,
-      date: '2 de noviembre',
-      month: 'Nov',
+      date: '2 de febrero',
+      month: 'Feb',
       description:
         'Forma parte de la campaña de reciclaje y contribuye a un planeta más limpio.',
     },
@@ -106,7 +100,7 @@ const PrincipalScreen = () => {
       title: 'Quinchao Innova con Nueva App de Reciclaje',
       description:
         'La Municipalidad de Quinchao ha lanzado una nueva aplicación móvil que facilita a los ciudadanos la ubicación de puntos de reciclaje y el seguimiento de sus esfuerzos ecológicos.',
-      image: require('../assets/news1.jpg'), // Imagen local para la primera noticia
+      image: require('../assets/news1.jpg'),
       details:
         'La nueva app permite a los usuarios escanear códigos QR en los contenedores de reciclaje para registrar sus acciones y recibir recompensas virtuales. Además, ofrece consejos diarios para mejorar prácticas sostenibles en el hogar.',
     },
@@ -115,7 +109,7 @@ const PrincipalScreen = () => {
       title: 'Evento de Limpieza Comunitaria este Sábado',
       description:
         'Únete a la próxima limpieza comunitaria en las playas de Quinchao y ayuda a mantener nuestro entorno limpio y saludable.',
-      image: require('../assets/news2.jpg'), // Imagen local para la segunda noticia
+      image: require('../assets/news2.jpg'),
       details:
         'El evento iniciará a las 8:00 AM en la Playa Principal y finalizará a las 12:00 PM. Se proporcionará todo el material necesario y habrá refrigerios para los participantes. ¡Tu participación es crucial para el éxito de esta iniciativa!',
     },
@@ -124,7 +118,7 @@ const PrincipalScreen = () => {
       title: 'Inauguración del Nuevo Centro de Compostaje',
       description:
         'La comuna de Quinchao celebra la inauguración de su nuevo centro de compostaje, una herramienta clave para la gestión de residuos orgánicos.',
-      image: require('../assets/news3.jpg'), // Imagen local para la tercera noticia
+      image: require('../assets/news3.jpg'),
       details:
         'Este centro permitirá a los residentes compostar sus residuos orgánicos de manera eficiente, reduciendo la cantidad de basura que va a los vertederos y mejorando la calidad del suelo en nuestras áreas verdes.',
     },
@@ -136,25 +130,25 @@ const PrincipalScreen = () => {
       id: 1,
       name: 'Facebook',
       icon: 'facebook',
-      url: 'https://www.facebook.com/MuniQuinchao/?locale=es_LA', // URL de Facebook
+      url: 'https://www.facebook.com/MuniQuinchao/?locale=es_LA',
     },
     {
       id: 2,
       name: 'Instagram',
       icon: 'instagram',
-      url: 'https://www.instagram.com/muniquinchao/?hl=es', // URL de Instagram
+      url: 'https://www.instagram.com/muniquinchao/?hl=es',
     },
     {
       id: 3,
       name: 'Página Web',
       icon: 'globe',
-      url: 'https://www.municipalidadquinchao.cl/cquinchao/', // URL de la Página Web
+      url: 'https://www.municipalidadquinchao.cl/cquinchao/',
     },
   ];
 
-  // Función para manejar la apertura del modal con la campaña o noticia seleccionada
+  // Función para manejar la apertura del modal
   const handleItemPress = (item, type) => {
-    setSelectedItem({ ...item, type }); // Añade el tipo (campaña o noticia)
+    setSelectedItem({ ...item, type });
     setModalVisible(true);
   };
 
@@ -166,18 +160,12 @@ const PrincipalScreen = () => {
 
   // Función para manejar la participación en una campaña
   const handleParticipate = () => {
-    // Aquí puedes implementar la lógica para participar en la campaña
-    // Por ejemplo, enviar una solicitud al backend, actualizar el estado, etc.
-    // Por ahora, simplemente cerraremos el modal
     closeModal();
     Alert.alert('', '¡Has participado exitosamente!');
   };
 
   // Función para manejar la acción en una noticia
   const handleNewsAction = () => {
-    // Aquí puedes implementar la lógica para manejar la noticia seleccionada
-    // Por ejemplo, navegar a una página web, abrir un detalle, etc.
-    // Por ahora, simplemente cerraremos el modal
     closeModal();
     Alert.alert('', '¡Gracias por leer nuestras noticias!');
   };
@@ -198,7 +186,7 @@ const PrincipalScreen = () => {
       if (supported) {
         await Linking.openURL(url);
       } else {
-        Alert.alert(`No se puede abrir la URL: ${url}`);
+        Alert.alert('Error', `No se puede abrir la URL: ${url}`);
       }
     } catch (error) {
       Alert.alert('Error', 'No se pudo abrir la URL.');
@@ -214,9 +202,9 @@ const PrincipalScreen = () => {
       case 'Instagram':
         return '#C13584';
       case 'Página Web':
-        return '#0077B5'; // Puedes elegir otro color si lo prefieres
+        return '#0077B5';
       default:
-        return '#000'; // Color por defecto
+        return '#000';
     }
   };
 
@@ -224,7 +212,7 @@ const PrincipalScreen = () => {
   const getCurrentDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0
+    const month = String(today.getMonth() + 1).padStart(2, '0');
     const year = today.getFullYear();
     return `${day}/${month}/${year}`;
   };
@@ -238,13 +226,13 @@ const PrincipalScreen = () => {
     setNewsIndex((prevIndex) => (prevIndex - 1 + news.length) % news.length);
   };
 
-  // useEffect para cambiar automáticamente la noticia cada 10 segundos
+  // Cambiar noticia automáticamente cada 10 segundos
   useEffect(() => {
     const interval = setInterval(() => {
       setNewsIndex((prevIndex) => (prevIndex + 1) % news.length);
-    }, 10000); // 10000 ms = 10 segundos
+    }, 10000);
 
-    return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
+    return () => clearInterval(interval);
   }, [news.length]);
 
   return (
@@ -253,7 +241,7 @@ const PrincipalScreen = () => {
       <ImageBackground
         source={require('../assets/Fondo-logo.jpeg')}
         style={styles.background}
-        resizeMode="cover" // Cambiado a 'cover' para que la imagen cubra toda el área
+        resizeMode="cover"
       >
         {/* Header Reutilizable */}
         <Header title="Bienvenido/a" subtitle="¡Estamos encantados de tenerte aquí!" />
@@ -264,6 +252,7 @@ const PrincipalScreen = () => {
           <Card style={styles.card}>
             <Card.Title
               title="Consejos Diarios"
+              titleStyle={styles.cardTitle}
               left={(props) => (
                 <Avatar.Icon
                   {...props}
@@ -299,6 +288,7 @@ const PrincipalScreen = () => {
           <Card style={styles.card}>
             <Card.Title
               title="Campañas"
+              titleStyle={styles.cardTitle}
               left={(props) => (
                 <Avatar.Icon
                   {...props}
@@ -307,6 +297,9 @@ const PrincipalScreen = () => {
                 />
               )}
             />
+            <View style={styles.subtitleContainer}>
+              <Text style={styles.cardSubtitle}>¡Súmate a nuestro proyecto ambiental!</Text>
+            </View>
             <Card.Content>
               {campaigns.map((campaign) => (
                 <TouchableOpacity
@@ -333,6 +326,7 @@ const PrincipalScreen = () => {
           <Card style={styles.card}>
             <Card.Title
               title="Noticias Quinchao"
+              titleStyle={styles.cardTitle}
               left={(props) => (
                 <Avatar.Icon
                   {...props}
@@ -363,7 +357,7 @@ const PrincipalScreen = () => {
                 </Paragraph>
               </TouchableOpacity>
 
-              {/* Botones de Navegación */}
+              {/* Botones de Navegación de Noticias */}
               <View style={styles.newsNavigation}>
                 <TouchableOpacity
                   onPress={handlePrevNews}
@@ -388,12 +382,13 @@ const PrincipalScreen = () => {
           {/* Tarjeta de Redes Sociales */}
           <Card style={styles.card}>
             <Card.Title
-              title="Síguenos en Redes Sociales"
+              title="Conéctate con la Municipalidad"
+              titleStyle={styles.cardTitle}
               left={(props) => (
                 <Avatar.Icon
                   {...props}
                   icon="share-variant"
-                  style={{ backgroundColor: '#3b5998' }} // Color inicial que se puede ajustar
+                  style={{ backgroundColor: '#3b5998' }}
                 />
               )}
             />
@@ -445,10 +440,14 @@ const PrincipalScreen = () => {
 
                   {/* Título del Elemento Seleccionado */}
                   <Text style={styles.modalTitle}>{selectedItem.title}</Text>
-                  {/* Fecha del Elemento Seleccionado */}
-                  <Text style={styles.modalDate}>{selectedItem.date}</Text>
-                  {/* Descripción del Elemento Seleccionado */}
-                  <Text style={styles.modalDescription}>{selectedItem.details}</Text>
+                  {/* Fecha del Elemento Seleccionado (para campañas) */}
+                  {selectedItem.date && (
+                    <Text style={styles.modalDate}>{selectedItem.date}</Text>
+                  )}
+                  {/* Descripción/Detalle según el tipo */}
+                  <Text style={styles.modalDescription}>
+                    {selectedItem.type === 'campaña' ? selectedItem.description : selectedItem.details}
+                  </Text>
 
                   {/* Botón de Acción según el Tipo */}
                   {selectedItem.type === 'campaña' ? (
@@ -483,7 +482,7 @@ const PrincipalScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5dc', // Color de fondo para cubrir los bordes
+    backgroundColor: '#f5f5dc',
   },
   background: {
     flex: 1,
@@ -493,18 +492,23 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    paddingTop: 20, // Ajustado para evitar superposición con el header
+    paddingTop: 20,
     alignItems: 'center',
     justifyContent: 'flex-start',
     backgroundColor: 'transparent',
     paddingBottom: 20,
   },
   card: {
-    width: '90%',
+    width: '94%',
     marginVertical: 10,
     elevation: 4,
     backgroundColor: '#fff',
     borderRadius: 10,
+  },
+  cardTitle: {
+    fontWeight: 'bold',
+    fontSize: 17.5,
+    color: '#333',
   },
   dateText: {
     fontSize: 12,
@@ -514,7 +518,7 @@ const styles = StyleSheet.create({
   },
   adviceText: {
     fontSize: 14,
-    color: '#333', // Mantiene el color negro para mejor legibilidad
+    color: '#333',
     textAlign: 'center',
   },
   adviceImage: {
@@ -536,6 +540,15 @@ const styles = StyleSheet.create({
   navButton: {
     padding: 10,
   },
+  subtitleContainer: {
+    marginTop: 8,
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  cardSubtitle: {
+    fontSize: 17,
+    color: '#2E7D32',
+  },
   campaignItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -547,29 +560,29 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#2E7D32', // Verde para el círculo
+    backgroundColor: '#2E7D32',
     marginRight: 10,
   },
   campaignTitle: {
     flex: 1,
     fontSize: 16,
-    color: '#000', // Mantiene el color negro para mejor legibilidad
+    color: '#000',
   },
   campaignDaysContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#2E7D32', // Verde para el círculo
+    backgroundColor: '#2E7D32',
     justifyContent: 'center',
     alignItems: 'center',
   },
   campaignDays: {
-    color: '#fff', // Número en blanco
+    color: '#fff',
     fontSize: 13,
     fontWeight: 'bold',
   },
   campaignMonth: {
-    fontSize: 10,
+    fontSize: 7.9,
     color: 'white',
     fontWeight: 'bold',
     textTransform: 'uppercase',
@@ -596,7 +609,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: 'justify',
   },
-  // Estilos para Redes Sociales
   socialMediaContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -606,7 +618,7 @@ const styles = StyleSheet.create({
   socialMediaButton: {
     alignItems: 'center',
     marginVertical: 10,
-    width: 80, // Ajusta el ancho según necesidad
+    width: 80,
   },
   socialMediaText: {
     marginTop: 5,
@@ -614,12 +626,11 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
-  // Estilos para el Modal
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semi-transparente
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
     width: '85%',
@@ -655,7 +666,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   participateButton: {
-    backgroundColor: '#1e8c65', // Verde más oscuro para el botón
+    backgroundColor: '#1e8c65',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
