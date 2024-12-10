@@ -297,7 +297,7 @@ const DenunciaScreen = ({ route, navigation }) => {
           imageStyle={styles.backgroundImage}
         >
           <View style={styles.overlay} />
-          <Text style={styles.headerTitle}>Denuncia Mirco-Basural</Text>
+          <Text style={styles.headerTitle}>Denuncia Micro-Basural</Text>
         </ImageBackground>
 
         <Card style={styles.card}>

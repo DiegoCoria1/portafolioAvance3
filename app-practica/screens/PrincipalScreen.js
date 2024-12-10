@@ -342,8 +342,29 @@ const PrincipalScreen = () => {
               )}
             />
             <Card.Content>
-              <View style={styles.newsContainer}>
-                {/* Flecha Izquierda */}
+              {/* Noticia Actual */}
+              <TouchableOpacity
+                style={styles.newsItemSingle}
+                onPress={() => handleItemPress(news[newsIndex], 'noticia')}
+                accessible={true}
+                accessibilityLabel={`Noticia ${news[newsIndex].title}`}
+              >
+                {/* Imagen de la Noticia */}
+                <Image
+                  source={news[newsIndex].image}
+                  style={styles.newsImageSingle}
+                  resizeMode="cover"
+                />
+                {/* Título de la Noticia */}
+                <Text style={styles.newsTitleSingle}>{news[newsIndex].title}</Text>
+                {/* Descripción de la Noticia */}
+                <Paragraph style={styles.newsDescriptionSingle}>
+                  {news[newsIndex].description}
+                </Paragraph>
+              </TouchableOpacity>
+
+              {/* Botones de Navegación */}
+              <View style={styles.newsNavigation}>
                 <TouchableOpacity
                   onPress={handlePrevNews}
                   style={styles.navButton}
@@ -352,29 +373,6 @@ const PrincipalScreen = () => {
                 >
                   <Feather name="chevron-left" size={30} color="#289a20" />
                 </TouchableOpacity>
-
-                {/* Noticia Actual */}
-                <TouchableOpacity
-                  style={styles.newsItemSingle}
-                  onPress={() => handleItemPress(news[newsIndex], 'noticia')}
-                  accessible={true}
-                  accessibilityLabel={`Noticia ${news[newsIndex].title}`}
-                >
-                  {/* Imagen de la Noticia */}
-                  <Image
-                    source={news[newsIndex].image}
-                    style={styles.newsImageSingle}
-                    resizeMode="cover"
-                  />
-                  {/* Título de la Noticia */}
-                  <Text style={styles.newsTitleSingle}>{news[newsIndex].title}</Text>
-                  {/* Descripción de la Noticia */}
-                  <Paragraph style={styles.newsDescriptionSingle}>
-                    {news[newsIndex].description}
-                  </Paragraph>
-                </TouchableOpacity>
-
-                {/* Flecha Derecha */}
                 <TouchableOpacity
                   onPress={handleNextNews}
                   style={styles.navButton}
@@ -512,6 +510,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginBottom: 5,
+    textAlign: 'center',
   },
   adviceText: {
     fontSize: 14,
@@ -528,6 +527,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+  },
+  newsNavigation: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
   },
   navButton: {
     padding: 10,
@@ -570,13 +574,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
   },
-  newsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   newsItemSingle: {
-    flex: 1,
     alignItems: 'center',
     paddingHorizontal: 10,
   },
