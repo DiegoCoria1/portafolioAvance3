@@ -79,10 +79,17 @@ const PerfilScreen = ({ navigation }) => {
       Alert.alert('Error', 'Por favor, ingresa un correo electrónico válido.');
       return;
     }
-    if (password.length < 6) {
-      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
+  
+    // Validación alfanumérica para la contraseña
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/; // Al menos 6 caracteres, una letra y un número
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        'Error',
+        'La contraseña debe tener al menos 6 caracteres, incluyendo letras y números.'
+      );
       return;
     }
+  
 
     // Aquí deberías implementar la lógica de autenticación real
     // Por ejemplo, llamar a una API para verificar las credenciales
